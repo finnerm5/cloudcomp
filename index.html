@@ -1,0 +1,169 @@
+<!doctype html>
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+	<title>CA485 Presentation Scheduler</title>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+
+
+	<link rel="stylesheet" href="../../codebase/dhtmlxscheduler.css" type="text/css" media="screen" title="no title"
+	      charset="utf-8">
+	<script src="../../codebase/dhtmlxscheduler.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../codebase/ext/dhtmlxscheduler_recurring.js" type="text/javascript" charset="utf-8"></script>
+	<script src="../../codebase/ext/dhtmlxscheduler_minical.js" type="text/javascript" charset="utf-8"></script>
+
+
+	<style type="text/css" media="screen">
+		html, body {
+			margin: 0px;
+			padding: 0px;
+			height: 100%;
+			overflow: hidden;
+		}
+	</style>
+
+	<script type="text/javascript" charset="utf-8">
+
+		function init() {
+			scheduler.config.multi_day = true;
+			scheduler.config.event_duration = 35;
+			scheduler.config.xml_date = "%Y-%m-%d %H:%i";
+			scheduler.config.occurrence_timestamp_in_utc = true;
+			scheduler.config.include_end_by = true;
+			scheduler.config.repeat_precise = true;
+
+			scheduler.attachEvent("onLightbox", function(){
+				var lightbox_form = scheduler.getLightbox(); // this will generate lightbox form
+				var inputs = lightbox_form.getElementsByTagName('input');
+				var date_of_end = null;
+				for (var i=0; i<inputs.length; i++) {
+					if (inputs[i].name == "date_of_end") {
+						date_of_end = inputs[i];
+						break;
+					}
+				}
+
+				var repeat_end_date_format = scheduler.date.date_to_str(scheduler.config.repeat_date);
+				var show_minical = function(){
+					if (scheduler.isCalendarVisible())
+						scheduler.destroyCalendar();
+					else {
+						scheduler.renderCalendar({
+							position:date_of_end,
+							date: scheduler.getState().date,
+							navigation:true,
+							handler:function(date,calendar) {
+								date_of_end.value = repeat_end_date_format(date);
+								scheduler.destroyCalendar()
+							}
+						});
+					}
+				};
+				date_of_end.onclick = show_minical;
+			});
+
+			scheduler.config.lightbox.sections = [
+				{ name:"description", height:40, map_to:"text", type:"textarea" , focus:true },
+				{ name:"Agenda", height:200, map_to:"text", type:"textarea" , focus:true },
+				{ name:"recurring", type:"recurring", map_to:"rec_type", button:"recurring" },
+				{ name:"time", height:72, type:"calendar_time", map_to:"auto" }
+			];
+
+			scheduler.init('scheduler_here', new Date(2015, 0, 10), "week");
+
+			scheduler.load("./data/events.xml", function() {
+				scheduler.showLightbox(2);
+			});
+
+		}
+
+	</script>
+</head>
+<body onload="init();">
+	
+	
+	
+	<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">CA485 Schedul</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
+        <li><a href="#">Link</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">One more separated link</a></li>
+          </ul>
+        </li>
+      </ul>
+      <form class="navbar-form navbar-left" role="search">
+        <div class="form-group">
+          <input type="text" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Link</a></li>
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+	
+	
+</br>
+
+
+
+	<div id="scheduler_here" class="dhx_cal_container" style='width:100%; height:100%;'>
+	<div class="dhx_cal_navline">
+		<div class="dhx_cal_prev_button">&nbsp;</div>
+		<div class="dhx_cal_next_button">&nbsp;</div>
+		<div class="dhx_cal_today_button"></div>
+		<div class="dhx_cal_date"></div>
+		<div class="dhx_cal_tab" name="day_tab" style="right:204px;"></div>
+		<div class="dhx_cal_tab" name="week_tab" style="right:140px;"></div>
+		<div class="dhx_cal_tab" name="month_tab" style="right:76px;"></div>
+	</div>
+	<div class="dhx_cal_header">
+	</div>
+	<div class="dhx_cal_data">
+	</div>
+
+	
+	
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
+
+
+
+</body>
